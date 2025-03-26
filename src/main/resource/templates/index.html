@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>记账</title>
+	<link rel="stylesheet" th:href="@{css/iconfont.css}">
+	<link rel="stylesheet" th:href="@{css/style.css}">
+	<style>
+		.modal-overlay {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0, 0, 0, 0.4);
+			z-index: 1000;
+			-webkit-backdrop-filter: blur(5px);
+			backdrop-filter: blur(5px);
+		}
+
+		.modal-container {
+			display: none;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 85%;
+			height: 70vh;
+			max-width: 380px;
+			background: #fff;
+			z-index: 1001;
+			border-radius: 16px;
+			overflow: hidden;
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+		}
+
+		.modal-iframe {
+			width: 100%;
+			height: 100%;
+			border: none;
+			background: #fff;
+			position: relative;
+			z-index: 1;
+			overflow-x: hidden;
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		@media screen and (max-width: 480px) {
+			html, body {
+				overflow: hidden;
+				position: fixed;
+				width: 100%;
+				height: 100%;
+			}
+
+			.modal-container {
+				width: 85%;
+				height: 65vh;
+				max-width: none;
+				border-radius: 16px;
+				position: fixed;
+				left: 50%;
+				transform: translate(-50%, -50%) !important;
+			}
+
+			/* 处理输入法弹出时的问题 */
+			body.keyboard-open .modal-container {
+				position: absolute;
+				transform: translate(-50%, 0) !important;
+				top: 20px;
+				bottom: auto;
+			}
+		}
+	</style>
+</head>
+
+<body>
+<div class="content">
+	<div class="billStatistics bill_box">
+		<div class="today flex clearfix ">
+			<div class="item_title">今天<span>[[${timeType.dayTime}]]</span></div>
+			<div class="item_all">
+				<div class="allin">总收入<em class="orange_num">[[${detail.dailyIncome}]]</em></div>
+				<div class="allout">总支出<em class="green_num"> [[${detail.dailyExpense}]]</em></div>
+			</div>
+		</div>
+		<div class="today flex clearfix ">
+			<div class="item_title">本周<span>[[${timeType.weekTime}]]</span></div>
+			<div class="item_all">
+				<div class="allin">总收入<em class="orange_num">[[${detail.weeklyIncome}]]</em></div>
+				<div class="allout">总支出<em class="green_num"> [[${detail.weeklyExpense}]]</em></div>
+			</div>
+		</div>
+		<div class="today flex clearfix ">
+			<div class="item_title">本月<span>[[${timeType.monthTime}]]</span></div>
+			<div class="item_all">
+				<div class="allin">总收入<em class="orange_num">[[${detail.monthlyIncome}]]</em></div>
+				<div class="allout">总支出<em class="green_num"> [[${detail.monthlyExpense}]]</em></div>
+			</div>
+		</div>
+		<div class="today flex clearfix ">
+			<div class="item_title">本年<span>[[${timeType.yearTime}]]</span></div>
+			<div class="item_all">
+				<div class="allin">总收入<em class="orange_num">[[${detail.yearlyIncome}]]</em></div>
+				<div class="allout">总支出<em class="green_num"> [[${detail.yearlyExpense}]]</em></div>
+			</div>
+		</div>
+	</div>
+	<div class="classified_expenditure bill_box">
+		<div class="classified_title flex clearfix"><strong>本月分类支出</strong>
+			<div class="item_all"><span class="mr">记账笔数<em class="black_num">[[${count}]]</em></span>总支出<em
+					class="green_num">[[${detail.monthlyExpense}]]</em></div>
+		</div>
+		<ol class="custom-list" th:each="typeSum : ${typeList}">
+			<li><i><img src="images/icon1.png" alt=""></i> [[${typeSum.name}]]<span class="blacklist_num fr">[[${typeSum.amount}]]</span></li>
+			<!-- <li><i><img src="images/icon1.png" alt=""></i> 行业交通<span class="blacklist_num fr">0.00</span></li> -->
+			<!-- <li><i><img src="images/icon1.png" alt=""></i> 居家物业<span class="blacklist_num fr">0.00</span></li> -->
+		</ol>
+	</div>
+	<!-- <div class="classified_expenditure bill_box"> -->
+	<!-- 	<div class="classified_title flex clearfix"><strong>本月分类收入</strong> -->
+	<!-- 		<div class="item_all"><span class="mr">收入笔数<em class="black_num">0</em></span>总收入<em -->
+	<!-- 				class="orange_num">0.00</em></div> -->
+	<!-- 	</div> -->
+	<!-- 	<ul class="custom-list flex wrap fz18"> -->
+	<!-- 		<li><i><img src="images/icon1.png" alt=""></i> 职业收入<div class="item_all fr mt"> -->
+	<!-- 				<div class="allin">收入笔数<em class="black_num">0.00</em></div> -->
+	<!-- 				<div class="allout">总收入<em class="orange_num"> 0.00</em></div> -->
+	<!-- 			</div> -->
+	<!-- 		</li> -->
+	<!-- 		<li><i><img src="images/icon1.png" alt=""></i> 其他收入<div class="item_all fr"> -->
+	<!-- 				<div class="allin">收入笔数<em class="black_num">0.00</em></div> -->
+	<!-- 				<div class="allout">总收入<em class="orange_num"> 0.00</em></div> -->
+	<!-- 			</div> -->
+	<!-- 		</li> -->
+	<!-- 	</ul> -->
+	<!-- </div> -->
+</div>
+
+<!-- 引入公共底部导航 -->
+<div th:replace="common/footer :: footer"></div>
+
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal-container" id="modalContainer">
+	<iframe id="modalIframe" class="modal-iframe"></iframe>
+</div>
+
+<script>
+	// 添加输入法弹出检测
+	let originalHeight = window.innerHeight;
+	window.addEventListener('resize', function() {
+		if (window.innerHeight < originalHeight) {
+			// 输入法弹出
+			document.body.classList.add('keyboard-open');
+		} else {
+			// 输入法收起
+			document.body.classList.remove('keyboard-open');
+			originalHeight = window.innerHeight;
+		}
+	});
+
+	function openAddAccountModal() {
+		const modalOverlay = document.getElementById('modalOverlay');
+		const modalContainer = document.getElementById('modalContainer');
+		const modalIframe = document.getElementById('modalIframe');
+
+		modalOverlay.style.display = 'block';
+		modalContainer.style.display = 'block';
+		modalIframe.src = '/add_account';
+
+		// 添加动画效果
+		modalContainer.style.opacity = '0';
+		modalContainer.style.transform = 'translate(-50%, -45%)';
+		setTimeout(() => {
+			modalContainer.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+			modalContainer.style.opacity = '1';
+			modalContainer.style.transform = 'translate(-50%, -50%)';
+		}, 50);
+	}
+
+	function closeAddAccountModal() {
+		const modalOverlay = document.getElementById('modalOverlay');
+		const modalContainer = document.getElementById('modalContainer');
+		const modalIframe = document.getElementById('modalIframe');
+
+		// 添加关闭动画
+		modalContainer.style.opacity = '0';
+		modalContainer.style.transform = 'translate(-50%, -45%)';
+		modalOverlay.style.opacity = '0';
+
+		setTimeout(() => {
+			modalOverlay.style.display = 'none';
+			modalContainer.style.display = 'none';
+			modalIframe.src = '';
+			location.reload();
+		}, 300);
+	}
+
+	// 修改记一笔按钮的点击事件
+	document.querySelector('.addBill').parentElement.addEventListener('click', function(e) {
+		e.preventDefault();
+		openAddAccountModal();
+	});
+</script>
+</body>
+
+</html>

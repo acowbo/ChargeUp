@@ -17,14 +17,14 @@
 
 - **后端框架**：Spring Boot
 - **前端模板引擎**：Thymeleaf
-- **数据库**：MySQL 
+- **数据库**：MySQL
 - **构建工具**：Maven
 
 ## 快速开始
 
 ### 环境要求
 
-- JDK 11 或更高版本
+- JDK 8 或更高版本
 - Maven 3.x
 
 ### 运行步骤
@@ -50,7 +50,7 @@
 
 4. **访问应用**
 
-   打开浏览器，访问 `http://localhost:8080`，即可开始使用。
+   打开浏览器，访问 `http://localhost:17002`，即可开始使用。
 
 ## 项目结构
 
@@ -59,11 +59,15 @@ simple-accounting/
 ├── src/
 │   ├── main/
 │   │   ├── java/
-│   │   │   └── com/example/simpleaccounting/
-│   │   │       ├── controller/         # 控制器层
-│   │   │       ├── entity/             # 实体类
-│   │   │       ├── repository/         # 数据访问层
-│   │   │       ├── service/            # 服务层
+│   │   │   └── fun/acowbo/simpleaccounting/
+│   │   │       ├── fun.acowbo.simpleaccounting.config/         # 配置文件
+│   │   │       ├── fun.acowbo.simpleaccounting.controller/         # 控制器层
+│   │   │       ├── fun.acowbo.simpleaccounting.convert/         # 转化器
+│   │   │       ├── fun.acowbo.simpleaccounting.entity/             # 实体类
+│   │   │       ├── fun.acowbo.simpleaccounting.mapper/         # 数据访问层
+│   │   │       ├── fun.acowbo.simpleaccounting.service/            # 服务层
+│   │   │       ├── fun.acowbo.simpleaccounting.util/            # 服务层
+│   │   │       ├── fun.acowbo.simpleaccounting.vo/            # VO
 │   │   │       └── SimpleAccountingApplication.java # 启动类
 │   │   ├── resources/
 │   │   │   ├── static/                 # 静态资源（CSS, JS等）
@@ -98,3 +102,27 @@ simple-accounting/
 ---
 
 **简单记账** - 让记账变得更简单！
+
+## 页面展示
+
+### 登录界面
+
+![image-20250326114427632](https://minio.acowbo.fun/typora-img/202503261144766.png)
+
+### 报表页
+
+![image-20250326114454418](https://minio.acowbo.fun/typora-img/202503261144579.png)
+
+### 明细页
+
+![image-20250326114537910](https://minio.acowbo.fun/typora-img/202503261145594.png)
+
+![image-20250326114617788](https://minio.acowbo.fun/typora-img/202503261146213.png)
+
+### 图表页
+
+![image-20250326114636560](https://minio.acowbo.fun/typora-img/202503261146723.png)
+
+### 新增账单页
+
+![image-20250326114659007](https://minio.acowbo.fun/typora-img/202503261147778.png)

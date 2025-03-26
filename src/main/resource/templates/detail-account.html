@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>账单列表</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{css/iconfont.css}">
+    <link rel="stylesheet" th:href="@{css/style.css}">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-hover: #45a049;
+            --text-color: #2c3e50;
+            --border-color: #e0e0e0;
+            --background-color: #f5f7fa;
+            --card-background: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --expense-color: #e74c3c;
+            --income-color: #27ae60;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--background-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 60px; /* 为底部导航留出空间 */
+        }
+
+        .search-bar {
+            width: 100%;
+            background-color: var(--card-background);
+            padding: 12px 16px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-sizing: border-box;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: var(--background-color);
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .timeline {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 70px 16px 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .timeline-item {
+            background-color: var(--card-background);
+            margin: 10px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            touch-action: pan-y;
+        }
+
+        .timeline-item-content {
+            position: relative;
+            background-color: var(--card-background);
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+            z-index: 1;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-left {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .description {
+            font-size: 15px;
+            color: var(--text-color);
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .date {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .amount {
+            font-size: 16px;
+            font-weight: 600;
+            margin-left: 16px;
+            white-space: nowrap;
+        }
+
+        .expense .amount {
+            color: var(--expense-color);
+        }
+
+        .income .amount {
+            color: var(--income-color);
+        }
+
+        .delete-button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 80px;
+            background-color: var(--expense-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 0;
+        }
+
+        .delete-button i {
+            font-size: 18px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+            margin-top: 60px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .empty-state p {
+            font-size: 15px;
+            margin: 0;
+            color: #666;
+        }
+
+        .confirm-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirm-dialog-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .confirm-dialog h3 {
+            margin: 0 0 20px 0;
+            color: var(--text-color);
+        }
+
+        .confirm-dialog-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .confirm-dialog button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .confirm-dialog .cancel-button {
+            background-color: #f0f0f0;
+            color: #666;
+        }
+
+        .confirm-dialog .confirm-button {
+            background-color: var(--expense-color);
+            color: white;
+        }
+
+        .confirm-dialog button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 480px) {
+            .timeline {
+                padding: 60px 12px 16px;
+            }
+
+            .timeline-item {
+                margin: 8px 0;
+            }
+
+            .timeline-item-content {
+                padding: 14px;
+            }
+
+            .description {
+                font-size: 14px;
+            }
+
+            .amount {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="content">
+    <div class="search-bar">
+        <div class="search-container">
+            <form th:action="@{/detail_account}" method="get" style="width: 100%; display: flex; gap: 10px;">
+                <input id="searchInput" type="text" name="query" placeholder="搜索账单..." />
+                <button type="submit">搜索</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="timeline" id="billList">
+        <div th:if="${#lists.isEmpty(detailAccount)}" class="empty-state">
+            <i class="fas fa-receipt"></i>
+            <p>暂无账单记录</p>
+        </div>
+        <div th:each="bill : ${detailAccount}"
+             th:class="${bill.inBill eq 0} ? 'timeline-item expense' : 'timeline-item income'"
+             th:data-id="${bill.id}">
+            <div class="timeline-item-content">
+                <div class="item-left">
+                    <div class="description" th:text="${bill.categoryName} + ' - ' + ${bill.name}"></div>
+                    <div class="date" th:text="${#temporals.format(bill.billTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                </div>
+                <div class="amount" th:text="${bill.inBill eq 0} ? '-¥' + ${bill.amount} : '+¥' + ${bill.amount}"></div>
+            </div>
+            <div class="delete-button" onclick="confirmDelete(this)">
+                <i class="fas fa-trash"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="confirm-dialog" id="confirmDialog">
+    <div class="confirm-dialog-content">
+        <h3>确认删除</h3>
+        <p>确定要删除这条账单记录吗？</p>
+        <div class="confirm-dialog-buttons">
+            <button class="cancel-button" onclick="cancelDelete()">取消</button>
+            <button class="confirm-button" onclick="deleteBill()">删除</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentBillId = null;
+    let startX = 0;
+    let currentX = 0;
+    let isDragging = false;
+    let activeItem = null;
+
+    // 初始化滑动删除功能
+    document.querySelectorAll('.timeline-item').forEach(item => {
+        const content = item.querySelector('.timeline-item-content');
+
+        item.addEventListener('touchstart', (e) => {
+            if (e.target.closest('.delete-button')) return;
+
+            startX = e.touches[0].clientX;
+            currentX = startX;
+            isDragging = true;
+
+            // 关闭其他打开的项
+            if (activeItem && activeItem !== content) {
+                activeItem.style.transform = 'translateX(0)';
+            }
+            activeItem = content;
+        }, { passive: true });
+
+        item.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+
+            currentX = e.touches[0].clientX;
+            const diff = currentX - startX;
+
+            // 限制左滑范围
+            if (diff <= 0 && diff >= -80) {
+                content.style.transform = `translateX(${diff}px)`;
+            }
+        }, { passive: true });
+
+        item.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const diff = currentX - startX;
+
+            // 根据滑动距离决定是否显示删除按钮
+            if (diff < -40) {
+                content.style.transform = 'translateX(-80px)';
+            } else {
+                content.style.transform = 'translateX(0)';
+            }
+        });
+    });
+
+    // 点击空白处关闭所有滑动项
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.timeline-item') && activeItem) {
+            activeItem.style.transform = 'translateX(0)';
+            activeItem = null;
+        }
+    });
+
+    function confirmDelete(button) {
+        const billItem = button.closest('.timeline-item');
+        currentBillId = billItem.dataset.id;
+        document.getElementById('confirmDialog').style.display = 'flex';
+    }
+
+    function cancelDelete() {
+        document.getElementById('confirmDialog').style.display = 'none';
+        currentBillId = null;
+    }
+
+    function deleteBill() {
+        if (!currentBillId) return;
+
+        fetch(`/TbBill/deleteBill?id=${currentBillId}`, {
+            method: 'DELETE'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const billItem = document.querySelector(`[data-id="${currentBillId}"]`);
+                    billItem.style.transform = 'translateX(100%)';
+                    billItem.style.opacity = '0';
+                    setTimeout(() => {
+                        billItem.remove();
+                    }, 300);
+                } else {
+                    alert('删除失败：' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('删除失败:', error);
+                alert('删除失败，请重试');
+            })
+            .finally(() => {
+                document.getElementById('confirmDialog').style.display = 'none';
+                currentBillId = null;
+            });
+    }
+
+    // 点击页面其他地方关闭确认对话框
+    document.getElementById('confirmDialog').addEventListener('click', function(e) {
+        if (e.target === this) {
+            cancelDelete();
+        }
+    });
+</script>
+<!-- 引入公共底部导航 -->
+<div th:replace="~{common/footer :: footer}"></div>
+</body>
+</html>

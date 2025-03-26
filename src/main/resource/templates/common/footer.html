@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="footer" class="fix_footer">
+  <style>
+    .fix_footer .active img {
+      transform: scale(1.2);
+    }
+    .fix_footer .active .f_title {
+      color: var(--primary-color, #4CAF50);
+      font-weight: 500;
+    }
+    .fix_footer .active .icon-liushui {
+      color: var(--primary-color, #4CAF50);
+      transform: scale(1.2);
+    }
+  </style>
+  <ul class="flex">
+    <li>
+      <a th:href="@{/detail_account?query=''}" th:class="${activeTab == 'detail' ? 'active' : ''}">
+        <i class="iconfont icon-liushui"></i>
+        <div class="f_title">流水</div>
+      </a>
+    </li>
+    <li>
+      <a th:href="@{/index}" th:class="${activeTab == 'index' ? 'active' : ''}">
+        <img src="images/icon1.png" alt="">
+        <div class="f_title">报表</div>
+      </a>
+    </li>
+    <li>
+      <a th:href="@{/add_account}">
+        <div class="addBill"></div>
+        <div class="f_title">记一笔</div>
+      </a>
+    </li>
+    <li>
+      <a th:href="@{/get_type_sum_with_total}" th:class="${activeTab == 'getTypeSumWithTotal' ? 'active' : ''}">
+      <img src="images/icon1.png" alt="">
+        <div class="f_title">图表</div>
+      </a>
+    </li>
+    <li>
+      <a href="" th:class="${activeTab == 'settings' ? 'active' : ''}">
+        <img src="images/icon1.png" alt="">
+        <div class="f_title">设置</div>
+      </a>
+    </li>
+  </ul>
+</div>
+</body>
+</html>

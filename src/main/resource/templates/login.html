@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>财务管家 - 登录</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      background-color: #0d6efd;
+      border-radius: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 16px;
+    }
+
+    .logo i {
+      font-size: 36px;
+      color: white;
+    }
+
+    .login-title {
+      font-size: 28px;
+      color: #303133;
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      font-size: 16px;
+      color: #909399;
+    }
+
+    .form-floating {
+      margin-bottom: 1rem;
+    }
+
+    .form-floating input {
+      height: 48px;
+    }
+
+    .btn-login {
+      width: 100%;
+      height: 48px;
+      font-size: 16px;
+      border-radius: 4px;
+      margin-top: 1rem;
+    }
+
+    .decoration {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      backdrop-filter: blur(2px);
+      animation: float 6s infinite ease-in-out;
+    }
+
+    .decoration i {
+      color: #0d6efd;
+    }
+
+    .coin1 {
+      top: 15%;
+      left: 20%;
+      width: 80px;
+      height: 80px;
+      animation-delay: 0s;
+    }
+
+    .coin2 {
+      top: 60%;
+      left: 10%;
+      width: 60px;
+      height: 60px;
+      animation-delay: 1.5s;
+    }
+
+    .coin3 {
+      top: 25%;
+      right: 15%;
+      width: 70px;
+      height: 70px;
+      animation-delay: 3s;
+    }
+
+    .coin4 {
+      bottom: 20%;
+      right: 20%;
+      width: 50px;
+      height: 50px;
+      animation-delay: 4.5s;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    @media (max-width: 768px) {
+      .decoration {
+        display: none;
+      }
+
+      .login-container {
+        margin: 20px;
+        padding: 30px 20px;
+      }
+    }
+
+    .alert {
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+<!-- 装饰元素 -->
+<div class="decoration coin1">
+  <i class="bi bi-coin"></i>
+</div>
+<div class="decoration coin2">
+  <i class="bi bi-wallet2"></i>
+</div>
+<div class="decoration coin3">
+  <i class="bi bi-cash"></i>
+</div>
+<div class="decoration coin4">
+  <i class="bi bi-graph-up"></i>
+</div>
+
+<!-- 登录表单 -->
+<div class="login-container">
+  <div class="logo-container">
+    <div class="logo">
+      <i class="bi bi-cash-stack"></i>
+    </div>
+    <h1 class="login-title">财务管家</h1>
+    <p class="login-subtitle">您的个人记账助手</p>
+  </div>
+
+  <!-- 错误提示 -->
+  <div class="alert alert-danger" role="alert" style="display: none;"></div>
+
+  <form th:action="@{/SysUser/login}" method="post" id="loginForm">
+    <div class="form-floating">
+      <input type="text" class="form-control" id="username" name="username" placeholder="用户名" required>
+      <label for="username">用户名</label>
+    </div>
+
+    <div class="form-floating">
+      <input type="password" class="form-control" id="password" name="password" placeholder="密码" required>
+      <label for="password">密码</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-login">
+      <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+      登录
+    </button>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // 阻止表单默认提交
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const spinner = submitBtn.querySelector('.spinner-border');
+
+    submitBtn.disabled = true;
+    spinner.classList.remove('d-none');
+
+    // 获取表单数据
+    const formData = new FormData(this);
+
+    // 发送请求
+    fetch('/SysUser/login', {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+            .then(response => {
+              return response.json().then(data => {
+                if (data.code === 200) {
+                  // 登录成功，重定向到首页
+                  window.location.href = '/index';
+                } else {
+                  // 登录失败，显示错误信息
+                  const alertDiv = document.querySelector('.alert');
+                  alertDiv.style.display = 'block';
+                  alertDiv.textContent = data.message;
+                  submitBtn.disabled = false;
+                  spinner.classList.add('d-none');
+                }
+              });
+            })
+            .catch(error => {
+              // 显示错误信息
+              const alertDiv = document.querySelector('.alert');
+              alertDiv.style.display = 'block';
+              alertDiv.textContent = error.message;
+
+              // 重置按钮状态
+              submitBtn.disabled = false;
+              spinner.classList.add('d-none');
+            });
+  });
+</script>
+</body>
+</html>

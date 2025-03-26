@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>新增账单</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --text-color: #333;
+            --border-color: #eee;
+            --background-color: #f7f7f7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #fff;
+            color: var(--text-color);
+            -webkit-tap-highlight-color: transparent;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            position: relative;
+            text-align: center;
+            padding: 16px;
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: normal;
+            color: #333;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #999;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        form {
+            flex: 1;
+            overflow-y: auto;
+            background: #fff;
+            padding-bottom: 80px;
+        }
+
+        .form-group {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            background: #fff;
+            position: relative;
+            pointer-events: auto;
+        }
+
+        .form-label {
+            width: 60px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .form-input {
+            flex: 1;
+            position: relative;
+        }
+
+        .form-input input[type="text"]:not(.datetime-picker-input),
+        .form-input input[type="number"] {
+            pointer-events: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 自定义下拉框样式 */
+        .better-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .better-select-trigger {
+            width: 100%;
+            padding: 8px 0;
+            font-size: 16px;
+            color: #333;
+            background: transparent;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .better-select-trigger::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid #999;
+            border-bottom: 2px solid #999;
+            transform: rotate(45deg);
+            transition: transform 0.3s;
+            margin-left: 8px;
+        }
+
+        .better-select.active .better-select-trigger::after {
+            transform: rotate(-135deg);
+        }
+
+        .better-select-options {
+            display: none;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 50vh;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .better-select.active .better-select-options {
+            display: block;
+        }
+
+        .better-select-option {
+            padding: 12px 20px;
+            font-size: 16px;
+            color: #333;
+            background: #fff;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .better-select-option.selected {
+            color: var(--primary-color);
+        }
+
+        .better-select-option.selected::before {
+            content: '✓';
+            position: absolute;
+            right: 20px;
+            color: var(--primary-color);
+        }
+
+        .better-select-option:active {
+            background: #f5f5f5;
+        }
+
+        .better-select-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+        }
+
+        .better-select.active .better-select-overlay {
+            display: block;
+        }
+
+        select, input {
+            width: 100%;
+            border: none;
+            font-size: 16px;
+            color: #333;
+            background: transparent;
+            padding: 2px 0;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .amount-input {
+            position: relative;
+        }
+
+        .amount-input::before {
+            content: '¥';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #333;
+            font-size: 16px;
+        }
+
+        .amount-input input {
+            padding-left: 16px;
+        }
+
+        #newCategoryDiv {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 320px;
+            background: #fff;
+            border-radius: 12px;
+            z-index: 1001;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+        }
+
+        .category-header {
+            padding: 16px;
+            text-align: center;
+            font-size: 18px;
+            color: #333;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .category-content {
+            padding: 20px;
+        }
+
+        .category-input {
+            margin-bottom: 20px;
+        }
+
+        .category-input input {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 0 15px;
+            font-size: 16px;
+            background: #f5f7fa;
+        }
+
+        .category-input input:focus {
+            border-color: var(--primary-color);
+            background: #fff;
+            outline: none;
+        }
+
+        .category-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .category-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn-confirm {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .error-message {
+            color: #ff4d4f;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+            text-align: center;
+        }
+
+        .success-message {
+            color: #52c41a;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+            text-align: center;
+        }
+
+        button[type="submit"] {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        /* 修复iOS select样式 */
+        select::-ms-expand {
+            display: none;
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            select {
+                background: transparent;
+            }
+        }
+
+        .form-input select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 24px;
+        }
+
+        /* 时间选择器样式 */
+        .datetime-picker {
+            position: relative;
+            width: 100%;
+        }
+
+        .datetime-picker-input {
+            pointer-events: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .datetime-picker-panel {
+            display: none;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .datetime-picker-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .datetime-picker-btn {
+            padding: 0 16px;
+            font-size: 16px;
+            color: var(--primary-color);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .datetime-picker-cancel {
+            color: #666;
+        }
+
+        .datetime-picker-content {
+            display: flex;
+            padding: 20px 0;
+            height: 200px;
+        }
+
+        .datetime-picker-column {
+            flex: 1;
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .datetime-picker-column::before,
+        .datetime-picker-column::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 80px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .datetime-picker-column::before {
+            top: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
+        }
+
+        .datetime-picker-column::after {
+            bottom: 0;
+            background: linear-gradient(to top, rgba(255,255,255,0.95), rgba(255,255,255,0));
+        }
+
+        .datetime-picker-wheel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transform: translateY(80px);
+        }
+
+        .datetime-picker-item {
+            height: 40px;
+            line-height: 40px;
+            font-size: 16px;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .datetime-picker-item.selected {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .datetime-picker-mask {
+            position: absolute;
+            top: 80px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            pointer-events: none;
+        }
+
+        .datetime-picker-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+        }
+
+        .category-type {
+            margin: 15px 0;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            padding: 8px 20px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-label input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-label input[type="radio"]:checked + span {
+            color: var(--primary-color);
+        }
+
+        .radio-label input[type="radio"]:checked + span::before {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+        }
+
+        .radio-label span {
+            font-size: 15px;
+            color: #666;
+            position: relative;
+            padding-left: 24px;
+            transition: all 0.3s;
+        }
+
+        .radio-label span::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            border: 2px solid #999;
+            border-radius: 50%;
+            background: #fff;
+            transition: all 0.3s;
+        }
+
+        .radio-label input[type="radio"]:checked + span::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        .radio-label:hover {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+<div class="modal-header">
+    <h2 class="modal-title">新增账单</h2>
+    <button class="close-btn" onclick="window.parent.closeAddAccountModal()">×</button>
+</div>
+
+<form th:action="@{/save_account}" method="post" th:object="${expenseForm}" enctype="multipart/form-data" id="addAccountForm">
+    <div class="form-group">
+        <label class="form-label">收支</label>
+        <div class="form-input">
+            <select th:field="*{inBill}" onchange="handleInBillChange()">
+                <option value="0">支出</option>
+                <option value="1">收入</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">类型</label>
+        <div class="form-input">
+            <select id="categorySelect" th:field="*{categoryId}" onchange="handleCategoryChange()">
+                <option value="">请选择类别</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"
+                        th:data-type="${category.type}">
+                </option>
+                <option value="addNew">新增类别...</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="category-overlay" id="categoryOverlay"></div>
+    <div id="newCategoryDiv">
+        <div class="category-header">
+            <h3>新增类别</h3>
+        </div>
+        <div class="category-content">
+            <div class="category-input">
+                <input type="text" id="newCategoryInput" placeholder="请输入新类别名称">
+            </div>
+            <div class="category-type">
+                <label class="radio-label">
+                    <input type="radio" name="categoryType" value="0" checked>
+                    <span>支出</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="categoryType" value="1">
+                    <span>收入</span>
+                </label>
+            </div>
+            <div class="error-message" id="categoryError"></div>
+            <div class="success-message" id="categorySuccess"></div>
+            <div class="category-buttons">
+                <button type="button" class="btn-cancel" onclick="cancelNewCategory()">取消</button>
+                <button type="button" class="btn-confirm" onclick="addNewCategory()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">名称</label>
+        <div class="form-input">
+            <input type="text" th:field="*{name}" placeholder="请输入账单名称" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">金额</label>
+        <div class="form-input">
+            <div class="amount-input">
+                <input type="number" step="0.01" th:field="*{amount}" placeholder="0.00" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">时间</label>
+        <div class="form-input">
+            <div class="datetime-picker">
+                <input type="text" class="datetime-picker-input" readonly placeholder="请选择时间" id="billTimeDisplay">
+                <input type="hidden" id="billTime" th:field="*{billTime}">
+            </div>
+        </div>
+    </div>
+
+    <div class="datetime-picker-overlay" id="dateTimeOverlay"></div>
+    <div class="datetime-picker-panel" id="dateTimePanel">
+        <div class="datetime-picker-header">
+            <button type="button" class="datetime-picker-btn datetime-picker-cancel">取消</button>
+            <button type="button" class="datetime-picker-btn datetime-picker-confirm">确定</button>
+        </div>
+        <div class="datetime-picker-content">
+            <div class="datetime-picker-column" id="yearColumn">
+                <div class="datetime-picker-wheel"></div>
+                <div class="datetime-picker-mask"></div>
+            </div>
+            <div class="datetime-picker-column" id="monthColumn">
+                <div class="datetime-picker-wheel"></div>
+                <div class="datetime-picker-mask"></div>
+            </div>
+            <div class="datetime-picker-column" id="dayColumn">
+                <div class="datetime-picker-wheel"></div>
+                <div class="datetime-picker-mask"></div>
+            </div>
+            <div class="datetime-picker-column" id="hourColumn">
+                <div class="datetime-picker-wheel"></div>
+                <div class="datetime-picker-mask"></div>
+            </div>
+            <div class="datetime-picker-column" id="minuteColumn">
+                <div class="datetime-picker-wheel"></div>
+                <div class="datetime-picker-mask"></div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit">保存账单</button>
+</form>
+
+<script>
+    function handleCategoryChange() {
+        const select = document.getElementById('categorySelect');
+        const newCategoryDiv = document.getElementById('newCategoryDiv');
+        const categoryOverlay = document.getElementById('categoryOverlay');
+        const inBillSelect = document.querySelector('select[name="inBill"]');
+
+        if (select.value === 'addNew') {
+            newCategoryDiv.style.display = 'block';
+            categoryOverlay.style.display = 'block';
+            document.getElementById('newCategoryInput').focus();
+            // 设置分类类型为当前选中的收支类型
+            const currentInBill = inBillSelect.value;
+            const radioInput = document.querySelector(`input[name="categoryType"][value="${currentInBill}"]`);
+            if (radioInput) {
+                radioInput.checked = true;
+                // 触发一个 change 事件以更新样式
+                radioInput.dispatchEvent(new Event('change'));
+            }
+        } else {
+            newCategoryDiv.style.display = 'none';
+            categoryOverlay.style.display = 'none';
+        }
+    }
+
+    function cancelNewCategory() {
+        const select = document.getElementById('categorySelect');
+        const newCategoryDiv = document.getElementById('newCategoryDiv');
+        const categoryOverlay = document.getElementById('categoryOverlay');
+        const categoryError = document.getElementById('categoryError');
+        const categorySuccess = document.getElementById('categorySuccess');
+
+        select.value = '';
+        newCategoryDiv.style.display = 'none';
+        categoryOverlay.style.display = 'none';
+        categoryError.style.display = 'none';
+        categorySuccess.style.display = 'none';
+        document.getElementById('newCategoryInput').value = '';
+    }
+
+    function refreshCategories() {
+        fetch('/TbCategory/list')
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200 && data.boResult) {
+                    const select = document.getElementById('categorySelect');
+                    const currentType = document.querySelector('select[name="inBill"]').value;
+
+                    // 保存"新增类别"选项
+                    const addNewOption = select.querySelector('option[value="addNew"]');
+
+                    // 清空现有选项（除了第一个"请选择类别"和最后一个"新增类别"）
+                    while (select.options.length > 2) {
+                        select.remove(1);
+                    }
+
+                    // 添加新的类别选项
+                    data.boResult.forEach(category => {
+                        const option = new Option(category.name, category.id);
+                        option.dataset.type = category.type;
+                        select.insertBefore(option, addNewOption);
+                    });
+
+                    // 重新初始化 better-select
+                    initBetterSelect();
+
+                    // 根据当前选择的收支类型过滤类别
+                    handleInBillChange();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function addNewCategory() {
+        const input = document.getElementById('newCategoryInput');
+        const categoryName = input.value.trim();
+        const categoryType = document.querySelector('input[name="categoryType"]:checked').value;
+        const errorDiv = document.getElementById('categoryError');
+        const successDiv = document.getElementById('categorySuccess');
+
+        if (!categoryName) {
+            errorDiv.textContent = '请输入类别名称';
+            errorDiv.style.display = 'block';
+            successDiv.style.display = 'none';
+            return;
+        }
+
+        // 检查是否已存在相同名称的类别
+        const select = document.getElementById('categorySelect');
+        const options = Array.from(select.options);
+        if (options.some(option => option.text === categoryName)) {
+            errorDiv.textContent = '该类别已存在';
+            errorDiv.style.display = 'block';
+            successDiv.style.display = 'none';
+            return;
+        }
+
+        // 发送请求添加新类别
+        fetch('/TbCategory/saveCategory', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: categoryName,
+                inBill: categoryType
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('添加类别失败');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.code === 200 && data.boResult) {
+                    // 显示成功消息
+                    successDiv.textContent = '添加成功';
+                    successDiv.style.display = 'block';
+                    errorDiv.style.display = 'none';
+
+                    // 1秒后关闭弹框并重新加载页面
+                    setTimeout(() => {
+                        // 如果在 iframe 中
+                        if (window.parent !== window) {
+                            // 重新加载父页面中的 iframe
+                            window.parent.location.href = window.parent.location.href + '?timestamp=' + new Date().getTime();
+                        } else {
+                            // 直接重新加载当前页面
+                            window.location.reload();
+                        }
+                    }, 1000);
+                } else {
+                    throw new Error(data.message || '添加类别失败');
+                }
+            })
+            .catch(error => {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+            });
+    }
+
+    function handleInBillChange() {
+        const inBillSelect = document.querySelector('select[name="inBill"]');
+        const type = inBillSelect.value;
+        const categorySelect = document.getElementById('categorySelect');
+        const betterSelectOptions = categorySelect.parentElement.querySelector('.better-select-options');
+
+        if (betterSelectOptions) {
+            const options = betterSelectOptions.querySelectorAll('.better-select-option');
+            options.forEach(option => {
+                const originalOption = categorySelect.querySelector(`option[value="${option.dataset.value}"]`);
+                if (originalOption && originalOption.dataset.type) {
+                    if (originalOption.dataset.type === type) {
+                        option.style.display = '';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        // 重置类别选择
+        categorySelect.value = '';
+        const betterSelectTrigger = categorySelect.parentElement.querySelector('.better-select-trigger');
+        if (betterSelectTrigger) {
+            betterSelectTrigger.textContent = '请选择类别';
+        }
+    }
+
+    // 表单提交处理
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = {
+            amount: formData.get('amount'),
+            category: formData.get('category'),
+            type: formData.get('type'),
+            remark: formData.get('remark')
+        };
+
+        // 表单验证
+        if (!data.amount || isNaN(data.amount)) {
+            alert('请输入有效的金额');
+            return;
+        }
+
+        if (!data.category) {
+            alert('请选择类别');
+            return;
+        }
+
+        // 发送请求添加账单
+        fetch('/TbBill/addBill', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('添加账单失败');
+                }
+                return response.json();
+            })
+            .then(() => {
+                // 如果在iframe中，通知父窗口刷新
+                if (window.parent !== window) {
+                    window.parent.location.reload();
+                } else {
+                    window.location.href = '/index';
+                }
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+    });
+
+    // 初始化better-select
+    function initBetterSelect() {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            // 创建better-select容器
+            const betterSelect = document.createElement('div');
+            betterSelect.className = 'better-select';
+
+            // 创建触发器
+            const trigger = document.createElement('button');
+            trigger.type = 'button';
+            trigger.className = 'better-select-trigger';
+            trigger.textContent = select.options[select.selectedIndex]?.text || select.querySelector('option')?.text || '请选择';
+
+            // 创建选项容器
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'better-select-options';
+
+            // 创建遮罩层
+            const overlay = document.createElement('div');
+            overlay.className = 'better-select-overlay';
+
+            // 添加选项
+            Array.from(select.options).forEach(option => {
+                const optionElement = document.createElement('button');
+                optionElement.type = 'button';
+                optionElement.className = 'better-select-option';
+                if (option.value === select.value) {
+                    optionElement.classList.add('selected');
+                }
+                optionElement.textContent = option.text;
+                optionElement.dataset.value = option.value;
+                // 添加type属性
+                if (option.dataset.type) {
+                    optionElement.dataset.type = option.dataset.type;
+                }
+
+                optionElement.addEventListener('click', () => {
+                    select.value = option.value;
+                    trigger.textContent = option.text;
+                    betterSelect.classList.remove('active');
+
+                    // 触发原select的change事件
+                    const event = new Event('change');
+                    select.dispatchEvent(event);
+
+                    // 更新选中状态
+                    optionsContainer.querySelectorAll('.better-select-option').forEach(opt => {
+                        opt.classList.toggle('selected', opt.dataset.value === option.value);
+                    });
+                });
+
+                optionsContainer.appendChild(optionElement);
+            });
+
+            // 添加事件监听
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                betterSelect.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', () => {
+                betterSelect.classList.remove('active');
+            });
+
+            // 组装better-select
+            betterSelect.appendChild(trigger);
+            betterSelect.appendChild(optionsContainer);
+            betterSelect.appendChild(overlay);
+
+            // 替换原select
+            select.style.display = 'none';
+            select.parentNode.insertBefore(betterSelect, select);
+        });
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        initBetterSelect();
+        handleCategoryChange();
+        handleInBillChange(); // 初始化时执行一次过滤
+
+        // 初始化日期选择器
+        const datePicker = new DateTimePicker();
+
+        // 防止其他输入框触发日期选择器
+        const inputs = document.querySelectorAll('input:not(.datetime-picker-input)');
+        inputs.forEach(input => {
+            input.addEventListener('click', (e) => {
+                e.stopPropagation();
+                datePicker.hide();
+            });
+        });
+
+        // 添加单选框的事件监听
+        const radioInputs = document.querySelectorAll('input[name="categoryType"]');
+        radioInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                // 更新所有单选框的样式
+                radioInputs.forEach(radio => {
+                    const label = radio.closest('.radio-label');
+                    if (radio.checked) {
+                        label.style.background = '#e8f5e9';
+                    } else {
+                        label.style.background = '#f5f5f5';
+                    }
+                });
+            });
+        });
+    });
+
+    class DateTimePicker {
+        constructor() {
+            this.init();
+            this.bindEvents();
+            this.currentDate = new Date();
+            this.selectedDate = new Date();
+            this.updateDisplay();
+            this.isOpen = false;
+        }
+
+        init() {
+            this.input = document.querySelector('.datetime-picker-input');
+            this.hiddenInput = document.getElementById('billTime');
+            this.panel = document.getElementById('dateTimePanel');
+            this.overlay = document.getElementById('dateTimeOverlay');
+            this.confirmBtn = document.querySelector('.datetime-picker-confirm');
+            this.cancelBtn = document.querySelector('.datetime-picker-cancel');
+
+            this.columns = {
+                year: this.initColumn('yearColumn', this.generateYears()),
+                month: this.initColumn('monthColumn', this.generateMonths()),
+                day: this.initColumn('dayColumn', this.generateDays()),
+                hour: this.initColumn('hourColumn', this.generateHours()),
+                minute: this.initColumn('minuteColumn', this.generateMinutes())
+            };
+
+            // 确保时间选择器的点击事件只在其自身的输入框上触发
+            if (this.input) {
+                this.input.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!this.isOpen) {
+                        this.show();
+                    }
+                });
+            }
+        }
+
+        bindEvents() {
+            // 移除原有的点击事件
+            this.input.removeEventListener('click', () => this.show());
+
+            this.overlay.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.hide();
+            });
+
+            this.confirmBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.confirm();
+            });
+
+            this.cancelBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.hide();
+            });
+
+            // 为每个列添加触摸事件
+            Object.keys(this.columns).forEach(key => {
+                const column = this.columns[key];
+                let startY = 0;
+                let moveY = 0;
+                let currentY = 0;
+
+                column.wheel.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                    currentY = column.currentPosition || 0;
+                });
+
+                column.wheel.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    moveY = e.touches[0].clientY - startY;
+                    column.wheel.style.transform = `translateY(${currentY + moveY}px)`;
+                });
+
+                column.wheel.addEventListener('touchend', () => {
+                    currentY += moveY;
+                    const itemHeight = 40;
+                    const maxOffset = -(column.items.length - 1) * itemHeight;
+                    const targetPosition = Math.round(currentY / itemHeight) * itemHeight;
+
+                    column.currentPosition = Math.max(maxOffset, Math.min(0, targetPosition));
+                    column.wheel.style.transition = 'transform 0.3s';
+                    column.wheel.style.transform = `translateY(${column.currentPosition}px)`;
+
+                    setTimeout(() => {
+                        column.wheel.style.transition = '';
+                    }, 300);
+
+                    this.updateSelectedDate();
+                });
+            });
+        }
+
+        generateYears() {
+            const currentYear = new Date().getFullYear();
+            return Array.from({length: 10}, (_, i) => currentYear - 5 + i);
+        }
+
+        generateMonths() {
+            return Array.from({length: 12}, (_, i) => i + 1);
+        }
+
+        generateDays() {
+            return Array.from({length: 31}, (_, i) => i + 1);
+        }
+
+        generateHours() {
+            return Array.from({length: 24}, (_, i) => i);
+        }
+
+        generateMinutes() {
+            return Array.from({length: 60}, (_, i) => i);
+        }
+
+        initColumn(id, items) {
+            const column = document.getElementById(id);
+            const wheel = column.querySelector('.datetime-picker-wheel');
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'datetime-picker-item';
+                div.textContent = String(item).padStart(2, '0');
+                wheel.appendChild(div);
+            });
+
+            return {
+                element: column,
+                wheel: wheel,
+                items: items,
+                currentPosition: 0
+            };
+        }
+
+        show() {
+            if (this.isOpen) return;
+            this.isOpen = true;
+            this.panel.style.display = 'block';
+            this.overlay.style.display = 'block';
+            this.updateDisplay();
+        }
+
+        hide() {
+            if (!this.isOpen) return;
+            this.isOpen = false;
+            this.panel.style.display = 'none';
+            this.overlay.style.display = 'none';
+        }
+
+        confirm() {
+            this.currentDate = this.selectedDate;
+            this.updateDisplay();
+            this.hide();
+
+            // 更新隐藏输入框的值
+            this.hiddenInput.value = this.formatDate(this.currentDate);
+        }
+
+        updateSelectedDate() {
+            const year = this.columns.year.items[Math.abs(Math.round(this.columns.year.currentPosition / 40))];
+            const month = this.columns.month.items[Math.abs(Math.round(this.columns.month.currentPosition / 40))];
+            const day = this.columns.day.items[Math.abs(Math.round(this.columns.day.currentPosition / 40))];
+            const hour = this.columns.hour.items[Math.abs(Math.round(this.columns.hour.currentPosition / 40))];
+            const minute = this.columns.minute.items[Math.abs(Math.round(this.columns.minute.currentPosition / 40))];
+
+            this.selectedDate = new Date(year, month - 1, day, hour, minute);
+        }
+
+        updateDisplay() {
+            const date = this.currentDate;
+            this.input.value = `${date.getFullYear()}年${String(date.getMonth() + 1).padStart(2, '0')}月${String(date.getDate()).padStart(2, '0')}日 ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+
+        formatDate(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+    }
+</script>
+</body>
+</html>

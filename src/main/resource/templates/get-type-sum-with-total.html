@@ -1,0 +1,414 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>账单分析</title>
+  <link rel="stylesheet" th:href="@{css/iconfont.css}">
+  <link rel="stylesheet" th:href="@{css/style.css}">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/layui@2.9.0/dist/layui.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.9.0/dist/css/layui.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f5f7fa;
+      min-height: 100vh;
+      width: 100%;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .content {
+      padding-bottom: 60px;
+    }
+
+    .filter-section {
+      padding: 15px;
+      background: #fff;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .filter-item {
+      margin-bottom: 15px;
+    }
+
+    .filter-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .filter-input {
+      width: 100%;
+      height: 40px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0 12px;
+      font-size: 14px;
+      background: #f5f7fa;
+    }
+
+    .filter-input:focus {
+      border-color: var(--primary-color);
+      background: #fff;
+      outline: none;
+    }
+
+    .chart-container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      margin: 15px;
+      height: calc(100vh - 250px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    #pieChart {
+      width: 100%;
+      height: 100%;
+    }
+
+    .type-select {
+      width: 100%;
+      height: 40px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0 12px;
+      font-size: 14px;
+      background: #f5f7fa;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+
+    .type-select:focus {
+      border-color: var(--primary-color);
+      background-color: #fff;
+      outline: none;
+    }
+
+    /* 自定义 layDate 样式 */
+    .layui-laydate {
+      border-radius: 8px !important;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1) !important;
+      width: 100% !important;
+      max-width: 350px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      margin: 0 !important;
+    }
+
+    .layui-laydate-header {
+      border-radius: 8px 8px 0 0 !important;
+      padding: 10px !important;
+    }
+
+    .layui-laydate-content td,
+    .layui-laydate-content th {
+      font-size: 14px !important;
+      width: 14.28% !important;
+    }
+
+    .layui-laydate-footer {
+      border-radius: 0 0 8px 8px !important;
+    }
+
+    .layui-laydate-main {
+      width: 100% !important;
+    }
+
+    .layui-laydate-content table {
+      width: 100% !important;
+      border-spacing: 0 !important;
+    }
+
+    .layui-laydate .layui-this {
+      background-color: var(--primary-color) !important;
+    }
+
+    /* 修改日期范围选择器的样式 */
+    .laydate-theme-molv .layui-laydate-range {
+      width: 100% !important;
+    }
+
+    /* 确保日期选择器在移动端正确显示 */
+    @media screen and (max-width: 480px) {
+      .layui-laydate {
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        position: fixed !important;
+        top: 50% !important;
+        margin-top: -150px !important;
+      }
+    }
+
+    .total-amount {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 1;
+    }
+
+    /* 修复底部导航 */
+    .fix_footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+<div class="content">
+  <div class="filter-section">
+    <div class="filter-item">
+      <label class="filter-label">时间范围</label>
+      <input type="text" class="filter-input" id="dateRange" readonly placeholder="请选择时间范围">
+    </div>
+    <div class="filter-item">
+      <label class="filter-label">收支类型</label>
+      <select class="type-select" id="typeSelect">
+        <option value="0">支出</option>
+        <option value="1">收入</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="total-amount" id="totalAmount"></div>
+    <div id="pieChart"></div>
+  </div>
+</div>
+
+<!-- 引入公共底部导航 -->
+<div th:replace="common/footer :: footer"></div>
+
+<script th:inline="javascript">
+  // 获取后端传递的数据
+  const detailAccount = /*[[${detailAccount}]]*/ [];
+
+  // 初始化图表
+  const chartDom = document.getElementById('pieChart');
+  const myChart = echarts.init(chartDom);
+
+  function updateChart(data) {
+    // 分离总金额和其他数据
+    const totalAmount = data.find(item => item.name === '总金额')?.amount || 0;
+    const chartData = data.filter(item => item.name !== '总金额');
+
+    // 更新总金额显示
+    document.getElementById('totalAmount').textContent = `总金额: ¥${totalAmount}`;
+
+    const option = {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: ¥{c} ({d}%)'
+      },
+      legend: {
+        show: true,
+        orient: 'horizontal',
+        left: 20,
+        top: 20,
+        itemWidth: 8,
+        itemHeight: 8,
+        icon: 'circle',
+        formatter: name => {
+          const item = chartData.find(d => d.name === name);
+          return `${name}  ¥${item.amount}`;
+        },
+        textStyle: {
+          fontSize: 12,
+          color: '#666'
+        }
+      },
+      series: [
+        {
+          name: '分类统计',
+          type: 'pie',
+          radius: ['45%', '75%'],
+          center: ['50%', '55%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: true,
+            position: 'outside',
+            formatter: params => {
+              return `${params.name}\n¥${params.value}\n${params.percent}%`;
+            },
+            padding: [0, -50, 0, -50],  // 调整标签位置
+            align: 'center'
+          },
+          labelLine: {
+            show: true,
+            length: 20,
+            length2: 10,
+            minTurnAngle: 90,
+            smooth: true
+          },
+          data: chartData.map(item => ({
+            value: item.amount,
+            name: item.name
+          }))
+        }
+      ]
+    };
+    myChart.setOption(option);
+  }
+
+  // 初始化日期选择器
+  function initDatePicker() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const lastDay = new Date(year, now.getMonth() + 1, 0).getDate();
+
+    const startDate = `${year}-${month}-01`;
+    const endDate = `${year}-${month}-${lastDay}`;
+
+    document.getElementById('dateRange').value = `${startDate} - ${endDate}`;
+    document.getElementById('typeSelect').value = '0'; // 默认选择支出
+
+    // 初始化 layDate
+    layui.use('laydate', function() {
+      var laydate = layui.laydate;
+      laydate.render({
+        elem: '#dateRange',
+        type: 'date',
+        range: true,
+        format: 'yyyy-MM-dd',
+        trigger: 'click',
+        theme: 'molv',
+        position: 'fixed',
+        done: function(value, date) {
+          if (value) {
+            fetchData();
+          }
+        }
+      });
+    });
+  }
+
+  // 获取数据并更新图表
+  function fetchData() {
+    const dateRange = document.getElementById('dateRange').value.split(' - ');
+    const type = document.getElementById('typeSelect').value;
+
+    if (!dateRange[0] || !dateRange[1]) {
+      alert('请选择时间范围');
+      return;
+    }
+
+    const startTime = dateRange[0] + ' 00:00:00';
+    const endTime = dateRange[1] + ' 23:59:59';
+
+    fetch('/TbBill/getTypeSumWithTotal', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        startTime: startTime,
+        endTime: endTime,
+        type: type
+      })
+    })
+            .then(response => response.json())
+            .then(data => {
+              if (data.code === 200) {
+                // 清空总金额显示
+                document.getElementById('totalAmount').textContent = '总金额: ¥0';
+
+                if (!data.boResult || data.boResult.length === 0) {
+                  // 显示空状态的饼图
+                  myChart.setOption({
+                    tooltip: {
+                      show: false
+                    },
+                    legend: {
+                      show: false
+                    },
+                    series: [{
+                      type: 'pie',
+                      radius: ['45%', '75%'],
+                      center: ['50%', '50%'],
+                      label: {
+                        show: false
+                      },
+                      data: [{
+                        value: 1,
+                        name: '暂无数据',
+                        itemStyle: {
+                          color: '#f0f0f0'
+                        }
+                      }]
+                    }],
+                    graphic: {
+                      type: 'text',
+                      left: 'center',
+                      top: 'middle',
+                      style: {
+                        text: '暂无数据',
+                        fontSize: 14,
+                        fill: '#999'
+                      }
+                    }
+                  });
+                } else {
+                  updateChart(data.boResult);
+                }
+              } else {
+                alert(data.message || '获取数据失败');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('获取数据失败');
+            });
+  }
+
+  // 事件监听
+  document.getElementById('typeSelect').addEventListener('change', fetchData);
+
+  // 页面加载完成后初始化
+  document.addEventListener('DOMContentLoaded', function() {
+    initDatePicker();
+    fetchData();
+
+    // 监听窗口大小变化，调整图表大小
+    window.addEventListener('resize', function() {
+      myChart.resize();
+    });
+  });
+</script>
+</body>
+</html>

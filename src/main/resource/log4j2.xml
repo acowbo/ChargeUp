@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <!-- 定义日志输出的根目录 -->
+    <Properties>
+        <Property name="log.dir">./logs</Property>
+    </Properties>
+    <!-- 定义日志输出格式 -->
+    <Appenders>
+        <!-- 控制台输出 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}.%M (%F:%L) - %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=cyan, TRACE=white}"/>
+        </Console>
+        <!-- 滚动文件输出ERROR -->
+        <RollingFile name="ErrorLog" fileName="${log.dir}/error/error.log" filePattern="${log.dir}/error/error-%d{yyyy-MM-dd}.log.gz">
+            <!-- 过滤，属于error的接受，不属于的舍弃下同 -->
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}.%M (%F:%L) - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+        <!-- 滚动文件输出INFO -->
+        <RollingFile name="InfoLog" fileName="${log.dir}/info/info.log" filePattern="${log.dir}/info/info-%d{yyyy-MM-dd}.log.gz">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}.%M (%F:%L) - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+        <!-- 滚动文件输出ERROR -->
+        <RollingFile name="WarnLog" fileName="${log.dir}/warn/warn.log" filePattern="${log.dir}/warn/warn-%d{yyyy-MM-dd}.log.gz">
+            <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}.%M (%F:%L) - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+    <!-- 定义日志级别和输出目标 -->
+    <Loggers>
+        <!-- 根据包名定义日志级别和输出目标 -->
+        <!-- <Logger name="com.example" level="INFO" additivity="false">
+            <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="Console"/>
+        </Logger> -->
+        <!-- 定义默认的日志级别和输出目标 -->
+        <Root level="info">
+            <AppenderRef ref="ErrorLog"/>
+            <AppenderRef ref="InfoLog"/>
+            <AppenderRef ref="WarnLog"/>
+            <AppenderRef ref="Console"/>
+        </Root>
+        <!-- 定义异步输出配置 -->
+    </Loggers>
+</Configuration>

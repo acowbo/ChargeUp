@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: bo_tally
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/simple_accounting?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  profiles:
+    active: prod
+server:
+  port: 17002
+logging:
+  config: classpath:log4j2.xml
+  level:
+    fun:
+      todoitbo:
+        botally:
+          mapper: debug
+    com:
+      baomidou:
+        mybatisplus:
+          extension:
+            plugins:
+              pagination:
+                optimize:
+                  JsqlParserCountOptimize: debug
+    root: info
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-field: is_deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0

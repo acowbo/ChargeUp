@@ -1,0 +1,218 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	max-width: 780px;
+	font-size: 16px;
+	/* 设置根元素的字体大小 */
+	margin: 0 auto;
+	background: #f2f2f2;
+}
+
+ul li {
+	list-style: none;
+}
+
+/* 自定义有序列表的序号样式 */
+ol.custom-list {
+	list-style-type: none;
+	/* 移除默认的数字标记 */
+	counter-reset: custom-counter;
+	/* 重置计数器 */
+}
+
+ol.custom-list li::before {
+	content: counter(custom-counter);
+	/* 使用计数器的值作为内容 */
+	counter-increment: custom-counter;
+	/* 计数器递增 */
+	color: #666;
+	/* 可根据需要设置样式 */
+	margin-right: 0.5em;
+	/* 可根据需要设置样式 */
+}
+
+.fz18 {
+	font-size: 1.2rem;
+}
+
+a {
+	text-decoration: none;
+}
+
+.flex {
+	display: flex;
+	justify-content: space-between;
+}
+
+.wrap {
+	flex-wrap: wrap;
+}
+
+.fr {
+	float: right;
+}
+
+.clearfix {
+	clear: both;
+	overflow: hidden;
+}
+
+.mr {
+	margin-right: .8rem;
+}
+
+.mt {
+	margin-top: -.6rem;
+}
+
+.iconfont {
+	font-size: 1.8rem;
+	vertical-align: middle;
+	/* margin: 0; */
+	/* padding: 0; */
+}
+
+.content {
+	width: 94%;
+	margin: 0 auto;
+}
+
+.bill_box {
+	background: #fff;
+	border-radius: .5rem;
+	margin: .6rem 0 1rem 0;
+	padding: .6rem;
+	padding-bottom: 0;
+	box-shadow: 5px 7px 10px 0px #ebebeb;
+}
+
+.billStatistics {}
+
+.today {
+	border-bottom: 1px solid #f2f2f2;
+	padding: 6px 0;
+	margin-bottom: 6px;
+}
+
+.item_title {
+	font-size: 1rem;
+	line-height: 20px;
+
+}
+
+.item_title span {
+	display: block;
+	font-size: 12px;
+	color: #b4b4b4;
+}
+
+.item_all {
+	font-size: 12px;
+	color: #b4b4b4;
+	text-align: right;
+	line-height: 1.2;
+}
+
+.item_all em {
+	margin-left: 6px;
+}
+
+.orange_num {
+	font-style: normal;
+	font-size: 1rem;
+	color: #fe730f;
+}
+
+.green_num {
+	font-style: normal;
+	font-size: 1rem;
+	color: #12a46c;
+}
+
+.black_num {
+	font-style: normal;
+	font-size: 1rem;
+	color: #555555;
+}
+
+.blacklist_num {
+	font-style: normal;
+	font-size: 1.2rem;
+	color: #333;
+}
+
+.fix_footer {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	max-width: 780px;
+	background: #fffdfd;
+	padding: 6px 0;
+}
+
+.fix_footer ul li {
+	text-align: center;
+	width: 20%;
+}
+
+.fix_footer ul li img {
+	width: 26px;
+}
+
+.fix_footer ul li .f_title {
+	font-size: 13px;
+	color: #606060;
+}
+
+.classified_title {
+	padding: .6rem 0;
+}
+
+.classified_title strong {
+	font-size: 1.2rem;
+	font-weight: normal;
+}
+
+.custom-list li i>img {
+	width: 1.5rem;
+	vertical-align: middle;
+	margin-right: .5rem;
+}
+
+.custom-list li {
+	padding: .6rem 0;
+	line-height: 1.5rem;
+	width: 100%;
+	border-bottom: 1px solid #f2f2f2;
+}
+
+.custom-list li:last-child {
+	border-bottom: none
+}
+
+.custom-list li span {
+	line-height: 1rem;
+}
+
+.addBill {
+	width: 2.9rem;
+	height: 2.9rem;
+	background: linear-gradient(to right, #fcd3bd, #f4b08d);
+	;
+	position: relative;
+	display: inline-block;
+	margin-top: -1.5rem;
+	border-radius: 1.2rem;
+}
+
+.addBill::before {
+	content: '+';
+	position: absolute;
+	color: #782503;
+	font-size: 2rem;
+	left: .8rem;
+	top: -.2rem;
+}
