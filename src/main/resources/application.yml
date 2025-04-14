@@ -2,17 +2,21 @@ spring:
   application:
     name: bo_tally
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/simple_accounting?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123456
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:simple_accounting}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:password}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration,classpath:fun/acowbo/simpleaccounting/db/migration
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   profiles:
     active: prod
 server:
-  port: 17002
+  port: ${SERVER_PORT:17002}
 logging:
   config: classpath:log4j2.xml
   level:
