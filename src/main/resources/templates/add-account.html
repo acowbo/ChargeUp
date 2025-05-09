@@ -784,17 +784,56 @@
                     successDiv.style.display = 'block';
                     errorDiv.style.display = 'none';
 
-                    // 1秒后关闭弹框并重新加载页面
-                    setTimeout(() => {
-                        // 如果在 iframe 中
-                        if (window.parent !== window) {
-                            // 重新加载父页面中的 iframe
-                            window.parent.location.href = window.parent.location.href + '?timestamp=' + new Date().getTime();
-                        } else {
-                            // 直接重新加载当前页面
-                            window.location.reload();
-                        }
-                    }, 1000);
+                    // 获取新类别的ID
+                    const newCategoryId = data.boResult.id;
+
+                    // 直接将新类别添加到下拉列表中
+                    const select = document.getElementById('categorySelect');
+                    const addNewOption = select.querySelector('option[value="addNew"]');
+
+                    // 创建新的选项
+                    const newOption = document.createElement('option');
+                    newOption.value = newCategoryId;
+                    newOption.text = categoryName;
+                    newOption.dataset.type = categoryType;
+
+                    // 将新选项插入到"新增类别"选项之前
+                    select.insertBefore(newOption, addNewOption);
+
+                    // 关闭新增类别弹窗
+                    cancelNewCategory();
+
+                    // 选中新添加的类别
+                    select.value = newCategoryId;
+
+                    // 重新初始化better-select
+                    initBetterSelect();
+
+                    // 处理收支类型过滤
+                    const inBillSelect = document.querySelector('select[name="inBill"]');
+                    const currentType = inBillSelect.value;
+
+                    // 确保新类别的显示与隐藏符合当前收支类型
+                    const betterSelectOptions = select.parentElement.querySelector('.better-select-options');
+                    if (betterSelectOptions) {
+                        const options = betterSelectOptions.querySelectorAll('.better-select-option');
+                        options.forEach(option => {
+                            const originalOption = select.querySelector(`option[value="${option.dataset.value}"]`);
+                            if (originalOption && originalOption.dataset.type) {
+                                if (originalOption.dataset.type === currentType) {
+                                    option.style.display = '';
+                                } else {
+                                    option.style.display = 'none';
+                                }
+                            }
+                        });
+                    }
+
+                    // 更新better-select的触发器文本
+                    const betterSelectTrigger = select.parentElement.querySelector('.better-select-trigger');
+                    if (betterSelectTrigger) {
+                        betterSelectTrigger.textContent = categoryName;
+                    }
                 } else {
                     throw new Error(data.message || '添加类别失败');
                 }
@@ -900,6 +939,14 @@
     function initBetterSelect() {
         const selects = document.querySelectorAll('select');
         selects.forEach(select => {
+            // 先移除旧的better-select元素
+            const existingBetterSelect = select.parentNode.querySelector('.better-select');
+            if (existingBetterSelect) {
+                existingBetterSelect.remove();
+                // 确保select可见，以便重新初始化
+                select.style.display = '';
+            }
+
             // 创建better-select容器
             const betterSelect = document.createElement('div');
             betterSelect.className = 'better-select';
