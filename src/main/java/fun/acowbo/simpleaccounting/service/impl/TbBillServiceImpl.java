@@ -115,7 +115,7 @@ public class TbBillServiceImpl implements ITbBillService {
         LocalDateTime monthStart = LocalDateTime.now().withDayOfMonth(1).with(LocalTime.MIN);
         LocalDateTime monthEnd = LocalDateTime.now().withDayOfMonth(1).plusMonths(1).minusNanos(1);
         LambdaQueryWrapper<TbBill> tbBillLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        tbBillLambdaQueryWrapper.between(TbBill::getBillTime, monthStart, monthEnd).eq(TbBill::getUserId, userId);
+        tbBillLambdaQueryWrapper.between(TbBill::getBillTime, monthStart, monthEnd).eq(TbBill::getUserId, userId).eq(TbBill::getIsDeleted, 0);
         return mapper.selectCount(tbBillLambdaQueryWrapper);
     }
 

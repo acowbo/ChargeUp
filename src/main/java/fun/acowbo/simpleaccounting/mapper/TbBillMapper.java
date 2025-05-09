@@ -28,7 +28,7 @@ public interface TbBillMapper extends BaseMapper<TbBill> {
 
     @Select("SELECT COALESCE(SUM(amount), 0) " +
             "FROM tb_bill " +
-            "WHERE in_bill = #{expense} and user_id = #{userId}")
+            "WHERE in_bill = #{expense} and user_id = #{userId} and is_deleted = 0")
     BigDecimal getDail(@Param("expense") int expense, @Param("userId") Long userId);
 
     @Select("SELECT " +
@@ -38,7 +38,7 @@ public interface TbBillMapper extends BaseMapper<TbBill> {
             "FROM " +
             "tb_bill tb " +
             "LEFT JOIN tb_category tc ON tc.id = tb.category_id " +
-            "WHERE tb.bill_time>= #{startDate} AND tb.bill_time <= #{endDate} and tb.user_id = #{userId} " +
+            "WHERE tb.bill_time>= #{startDate} AND tb.bill_time <= #{endDate} and tb.user_id = #{userId} and tb.is_deleted = 0 " +
             "GROUP BY " +
             "category_id")
     List<BillTypeSumVO> getTypeSum(@Param("startDate") LocalDateTime startDate,
@@ -57,6 +57,7 @@ public interface TbBillMapper extends BaseMapper<TbBill> {
             "AND tb.bill_time <= #{endDate} " +
             "AND tb.user_id = #{userId} " +
             "AND tb.in_bill = #{inBill} " +
+            "AND tb.is_deleted = 0 " +
             "GROUP BY " +
             "tc.name " +
             "WITH ROLLUP")
