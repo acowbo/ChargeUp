@@ -7,6 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * description: WebMvcConfig配置
+ *
  * @author <a href="https://acowbo.fun">acowbo</a>
  * @version 1.0
  * @since 2025/3/25
@@ -19,6 +20,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 // 配置需要拦截的路径
                 .addPathPatterns("/**")
                 // 配置排除的路径
-                .excludePathPatterns("/login", "/SysUser/login","/static/**");
+                .excludePathPatterns("/login", "/SysUser/login", "/static/**");
     }
 }

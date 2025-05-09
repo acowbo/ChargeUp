@@ -4,12 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 断言工具类
- *
- * @author XUEW
- * @date 下午9:03 2023/2/12
- */
+
 public class Assert {
 
     public static boolean isEmpty(CharSequence s) {
@@ -42,70 +37,6 @@ public class Assert {
 
     public static boolean isEmpty(List<?> obj) {
         return obj == null || obj.size() == 0;
-    }
-
-    public static boolean notEmpty(CharSequence s) {
-        return !isEmpty(s);
-    }
-
-    public static boolean notEmpty(Collection<?> obj) {
-        return !isEmpty(obj);
-    }
-
-    public static boolean notEmpty(Map<?, ?> obj) {
-        return !isEmpty(obj);
-    }
-
-    public static boolean notEmpty(Object[] obj) {
-        return !isEmpty(obj);
-    }
-
-    public static boolean notEmpty(Object obj) {
-        return !isEmpty(obj);
-    }
-
-    public static boolean notEmpty(List<?> obj) {
-        return !isEmpty(obj);
-    }
-
-    public static void assertNotEmpty(CharSequence s, String name) {
-        if (isEmpty(s)) {
-            throwException(name);
-        }
-    }
-
-    public static void assertNotEmpty(Collection<?> obj, String name) {
-        if (isEmpty(obj)) {
-            throwException(name);
-        }
-    }
-
-    public static void assertNotEmpty(Map<?, ?> obj, String name) {
-        if (isEmpty(obj)) {
-            throwException(name);
-        }
-    }
-
-    public static void assertNotEmpty(Object[] obj, String name) {
-        if (isEmpty(obj)) {
-            throwException(name);
-        }
-    }
-
-    public static void assertNotEmpty(Object obj, String name) {
-        if (isEmpty(obj)) {
-            throwException(name);
-        }
-    }
-
-    public static void assertNotEmpty(List<?> obj, String name) {
-        if (isEmpty(obj)) {
-            throwException(name);
-        }
-    }
-
-    private static String throwException(String name) {
-        throw new RuntimeException("REQUEST_PARAM_IS_NULL 请求参数<" + name + ">为空");
     }
 
 }

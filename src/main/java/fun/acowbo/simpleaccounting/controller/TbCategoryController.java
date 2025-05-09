@@ -23,21 +23,23 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "TbCategory")
 @Validated
-public class TbCategoryController{
+public class TbCategoryController {
 
     @Resource
     protected ITbCategoryService service;
 
     @GetMapping("/getCategoryList")
-    public BoResult<List<TbCategoryRespVO>> getCategoryList(){
+    public BoResult<List<TbCategoryRespVO>> getCategoryList() {
         return BoResult.resultOk(TbCategoryConvert.INSTANCE.convertList(service.getCategoryList(UserContext.getUserId())));
     }
+
     @DeleteMapping("/deleteCategory")
-    public BoResult<Boolean> deleteCategory(Long id){
+    public BoResult<Boolean> deleteCategory(Long id) {
         return BoResult.resultOk(service.deleteCategory(id));
     }
+
     @PostMapping("/saveCategory")
-    public BoResult<TbCategory> saveCategory(@RequestBody SaveTbCategoryVO saveTbCategoryVo){
+    public BoResult<TbCategory> saveCategory(@RequestBody SaveTbCategoryVO saveTbCategoryVo) {
         return BoResult.resultOk(service.saveCategory(saveTbCategoryVo));
     }
 }

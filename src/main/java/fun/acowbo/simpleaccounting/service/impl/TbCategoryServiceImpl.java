@@ -36,10 +36,10 @@ public class TbCategoryServiceImpl implements ITbCategoryService {
         bean.setUserId(UserContext.getUserId());
         bean.setType(tbCategoryVo.getType());
         Long selectCount = mapper.selectCount(new LambdaQueryWrapper<TbCategory>().eq(TbCategory::getName, bean.getName()));
-        if (selectCount > 0){
+        if (selectCount > 0) {
             throw new RuntimeException("分类名称已存在");
         }
-        if (bean.getId() == null || bean.getId() == 0){
+        if (bean.getId() == null || bean.getId() == 0) {
             return mapper.insert(bean) > 0 ? bean : null;
         }
         return mapper.updateById(bean) > 0 ? bean : null;

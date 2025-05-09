@@ -50,7 +50,7 @@ public class WebMainController {
     @GetMapping("/detail_account")
     public String detailAccount(@RequestParam("query") String query, Model model) {
         List<TbBillRespVO> billList = service.getBillList(new GetTbBillReqVO());
-        if (!"''".equals(query)){
+        if (!"''".equals(query)) {
             billList = billList.stream()
                     .filter(bill -> bill.getName().contains(query) || bill.getCategoryName().contains(query))
                     .collect(Collectors.toList());
@@ -74,6 +74,7 @@ public class WebMainController {
         model.addAttribute("categories", categoryService.getCategoryList(UserContext.getUserId()));
         return "add-account";
     }
+
     @PostMapping("/save_account")
     public String submitExpenseForm(@ModelAttribute SaveTbBillReqVO expenseForm) {
         // 处理表单数据
@@ -88,7 +89,6 @@ public class WebMainController {
         // 返回login.html页面
         return "login";
     }
-
 
 
     @GetMapping("/logout")

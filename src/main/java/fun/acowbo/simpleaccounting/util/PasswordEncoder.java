@@ -14,7 +14,7 @@ import java.util.Base64;
 public class PasswordEncoder {
     /**
      * description: 生成随机盐
-
+     *
      * @return java.lang.String
      * @since 2025/3/25
      */
@@ -28,8 +28,9 @@ public class PasswordEncoder {
 
     /**
      * description: 密码加盐hash
+     *
      * @param password 密码
-     * @param salt 盐
+     * @param salt     盐
      * @return java.lang.String
      * @since 2025/3/25
      */
@@ -37,16 +38,16 @@ public class PasswordEncoder {
         try {
             // 先将密码和盐拼接
             String passwordWithSalt = password + salt;
-            
+
             // 使用SHA-256进行多次hash
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(passwordWithSalt.getBytes());
-            
+
             // 进行多次迭代增加破解难度
             for (int i = 0; i < 1000; i++) {
                 hash = digest.digest(hash);
             }
-            
+
             return Base64.getEncoder().encodeToString(hash);
         } catch (Exception e) {
             throw new RuntimeException("密码加密失败", e);
@@ -55,9 +56,10 @@ public class PasswordEncoder {
 
     /**
      * description: 验证密码
-     * @param inputPassword 用户输入的密码
+     *
+     * @param inputPassword  用户输入的密码
      * @param storedPassword 数据库中存储的加密后的密码
-     * @param salt 盐
+     * @param salt           盐
      * @return boolean
      * @since 2025/3/25
      */
@@ -66,6 +68,11 @@ public class PasswordEncoder {
         return encodedInputPassword.equals(storedPassword);
     }
 
+    /**
+     * description: <h1>留个生成密码的口子</h1>
+     *
+     * @since 2025/5/9
+     */
     public static void main(String[] args) {
         String password = "123456";
         String salt = generateSalt();

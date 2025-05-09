@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
      * 捕捉校验异常(BindException)
      *
      * @return boResult
-    */
+     */
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
      * 捕捉校验异常(MethodArgumentNotValidException)
      *
      * @return boResult
-    */
+     */
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
      * 捕捉其他所有自定义异常
      *
      * @return boResult
-    */
+     */
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BusinessException.class)
@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
      * 捕捉404异常
      *
      * @return boResult
-    */
+     */
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
      * @param request 请求
      * @param ex      异常
      * @return boResult
-    */
+     */
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
@@ -99,7 +99,7 @@ public class GlobalExceptionHandler {
      *
      * @param request 请求
      * @return boResult
-    */
+     */
 
     private HttpStatus getStatus(HttpServletRequest request) {
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
@@ -114,7 +114,7 @@ public class GlobalExceptionHandler {
      *
      * @param fieldErrors 字段错误值
      * @return boResult
-    */
+     */
 
     private Map<String, Object> getValidError(List<FieldError> fieldErrors) {
         Map<String, Object> result = new HashMap<>(16);

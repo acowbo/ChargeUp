@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class TimeUtils {
 
-    public static TimeVO getAllTimeType(){
+    public static TimeVO getAllTimeType() {
         // 获取当前时间
         LocalDateTime now = LocalDateTime.now();
 

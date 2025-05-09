@@ -32,21 +32,24 @@ public class TbBillController {
     public BoResult<Boolean> saveBill(@Validated @RequestBody SaveTbBillReqVO saveTbBillReqVo) {
         return BoResult.resultOk(service.saveBill(saveTbBillReqVo));
     }
+
     @DeleteMapping("/deleteBill")
     public BoResult<Boolean> deleteBill(Long id) {
         return BoResult.resultOk(service.deleteBill(id));
     }
+
     @GetMapping("/getBillList")
     public BoResult<List<TbBillRespVO>> getBillList(@Validated GetTbBillReqVO getTbBillReqVo) {
         return BoResult.resultOk(service.getBillList(getTbBillReqVo));
     }
+
     @GetMapping("/getDetail")
     public BoResult<DetailRespVO> getDetail() {
         return BoResult.resultOk(service.getDetail(UserContext.getUserId()));
     }
 
     @PostMapping("/getTypeSumWithTotal")
-    public BoResult<List<BillTypeSumVO>> getTypeSumWithTotal(@RequestBody TypeSumWithTotalVO  typeSumWithTotalVO) {
+    public BoResult<List<BillTypeSumVO>> getTypeSumWithTotal(@RequestBody TypeSumWithTotalVO typeSumWithTotalVO) {
         // date 转换成 LocalDateTime
         Date startTime = typeSumWithTotalVO.getStartTime();
         Date endTime = typeSumWithTotalVO.getEndTime();

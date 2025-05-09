@@ -30,14 +30,14 @@ public class BoResult<T> {
     private T boResult;
 
     public static <T> BoResult<T> resultOk() {
-        return new BoResult<T>(HttpStatus.OK.value(), "请求成功!",null);
+        return new BoResult<T>(HttpStatus.OK.value(), "请求成功!", null);
     }
 
     public static <T> BoResult<T> resultOk(T result) {
-        return new BoResult<T>(HttpStatus.OK.value(), "请求成功!",result);
+        return new BoResult<T>(HttpStatus.OK.value(), "请求成功!", result);
     }
 
-    public static <T> BoResult<T> defineError(BusinessException e){
+    public static <T> BoResult<T> defineError(BusinessException e) {
         BoResult<T> boResult = new BoResult<T>();
         boResult.setCode(e.getErrorCode());
         boResult.setMessage(e.getErrorMessage());
@@ -46,7 +46,7 @@ public class BoResult<T> {
     }
 
     public static <T> BoResult<T> resultFail(String failMsg) {
-        return new BoResult <T>(HttpStatus.FORBIDDEN.value(), failMsg,null);
+        return new BoResult<T>(HttpStatus.FORBIDDEN.value(), failMsg, null);
     }
 
 }

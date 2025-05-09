@@ -58,11 +58,11 @@ public class TbBillServiceImpl implements ITbBillService {
         LambdaQueryWrapper<TbBill> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(getTbBillReqVo.getId() != null, TbBill::getId, getTbBillReqVo.getId())
                 .eq(getTbBillReqVo.getCategoryId() != null, TbBill::getCategoryId, getTbBillReqVo.getCategoryId())
-                .eq(TbBill::getUserId,UserContext.getUserId())
+                .eq(TbBill::getUserId, UserContext.getUserId())
                 .between(getTbBillReqVo.getStartTime() != null, TbBill::getBillTime, getTbBillReqVo.getStartTime(), getTbBillReqVo.getEndTime())
                 .like(getTbBillReqVo.getName() != null, TbBill::getName, getTbBillReqVo.getName())
                 .between(getTbBillReqVo.getMinAmount() != null, TbBill::getAmount, getTbBillReqVo.getMinAmount(), getTbBillReqVo.getMaxAmount())
-                .apply(getTbBillReqVo.getBelongTime()!= null,"DATE_FORMAT(bill_time, '%Y-%m-%d') = DATE_FORMAT({0}, '%Y-%m-%d')",getTbBillReqVo.getBelongTime())
+                .apply(getTbBillReqVo.getBelongTime() != null, "DATE_FORMAT(bill_time, '%Y-%m-%d') = DATE_FORMAT({0}, '%Y-%m-%d')", getTbBillReqVo.getBelongTime())
                 .orderByDesc(TbBill::getBillTime);
         List<TbBillRespVO> tbBillRespVos = new ArrayList<>();
         List<TbBill> tbBills = mapper.selectList(lambdaQueryWrapper);
@@ -84,7 +84,7 @@ public class TbBillServiceImpl implements ITbBillService {
 
     // 获取当天花费总额
     @Override
-    public BigDecimal getDailyExpense(boolean expense,Long userId) {
+    public BigDecimal getDailyExpense(boolean expense, Long userId) {
         LocalDateTime todayStart = LocalDateTime.now().with(LocalTime.MIN);
         LocalDateTime todayEnd = LocalDateTime.now().with(LocalTime.MAX);
 
@@ -93,7 +93,7 @@ public class TbBillServiceImpl implements ITbBillService {
 
     // 获取本周花费总额
     @Override
-    public BigDecimal getWeeklyExpense(boolean expense,Long userId) {
+    public BigDecimal getWeeklyExpense(boolean expense, Long userId) {
         LocalDateTime weekStart = LocalDateTime.now().with(DayOfWeek.MONDAY).with(LocalTime.MIN);
         LocalDateTime weekEnd = LocalDateTime.now().with(DayOfWeek.SUNDAY).with(LocalTime.MAX);
 
@@ -102,7 +102,7 @@ public class TbBillServiceImpl implements ITbBillService {
 
     // 获取本月花费总额
     @Override
-    public BigDecimal getMonthlyExpense(boolean expense,long month,Long userId) {
+    public BigDecimal getMonthlyExpense(boolean expense, long month, Long userId) {
         LocalDateTime monthStart = LocalDateTime.now().minusMonths(month).withDayOfMonth(1).with(LocalTime.MIN);
         LocalDateTime monthEnd = LocalDateTime.now().minusMonths(month).withDayOfMonth(1).plusMonths(1).minusNanos(1);
 
@@ -128,7 +128,7 @@ public class TbBillServiceImpl implements ITbBillService {
 
     // 获取本年花费总额
     @Override
-    public BigDecimal getYearlyExpense(boolean expense,Long userId) {
+    public BigDecimal getYearlyExpense(boolean expense, Long userId) {
         LocalDateTime yearStart = LocalDateTime.now().withDayOfYear(1).with(LocalTime.MIN);
         LocalDateTime yearEnd = LocalDateTime.now().withDayOfYear(1).plusYears(1).minusNanos(1);
 
@@ -138,22 +138,22 @@ public class TbBillServiceImpl implements ITbBillService {
     @Override
     public DetailRespVO getDetail(Long userId) {
         return DetailRespVO.builder()
-                .dailyExpense(getDailyExpense(true,userId))
-               .dailyIncome(getDailyExpense(false,userId))
-               .monthlyExpense(getMonthlyExpense(true,0,userId))
-               .monthlyIncome(getMonthlyExpense(false,0,userId))
-               .weeklyExpense(getWeeklyExpense(true,userId))
-               .weeklyIncome(getWeeklyExpense(false,userId))
-               .yearlyExpense(getYearlyExpense(true,userId))
-               .yearlyIncome(getYearlyExpense(false,userId))
-                .totalExpense(calculateTotalExpense(true,userId))
-                .totalIncome(calculateTotalExpense(false,userId))
-               .build();
+                .dailyExpense(getDailyExpense(true, userId))
+                .dailyIncome(getDailyExpense(false, userId))
+                .monthlyExpense(getMonthlyExpense(true, 0, userId))
+                .monthlyIncome(getMonthlyExpense(false, 0, userId))
+                .weeklyExpense(getWeeklyExpense(true, userId))
+                .weeklyIncome(getWeeklyExpense(false, userId))
+                .yearlyExpense(getYearlyExpense(true, userId))
+                .yearlyIncome(getYearlyExpense(false, userId))
+                .totalExpense(calculateTotalExpense(true, userId))
+                .totalIncome(calculateTotalExpense(false, userId))
+                .build();
     }
 
     // 计算总花费
     @Override
-    public BigDecimal calculateTotalExpense(boolean expense,Long userId) {
+    public BigDecimal calculateTotalExpense(boolean expense, Long userId) {
         return mapper.getDail(expense ? 0 : 1, userId);
     }
 
