@@ -10,19 +10,6 @@
   <script src="https://cdn.jsdelivr.net/npm/layui@2.9.0/dist/layui.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.9.0/dist/css/layui.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: #f5f7fa;
-      min-height: 100vh;
-      width: 100%;
-      overflow-x: hidden;
-      position: relative;
-    }
 
     /* Modal styles */
     .modal-overlay {
@@ -235,15 +222,7 @@
       z-index: 1;
     }
 
-    /* 修复底部导航 */
-    .fix_footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #fff;
-      z-index: 100;
-    }
+    /* 底部导航样式已在全局CSS中定义 */
   </style>
 </head>
 <body>
@@ -267,9 +246,6 @@
     <div id="pieChart"></div>
   </div>
 </div>
-
-<!-- 引入公共底部导航 -->
-<div th:replace="common/footer :: footer"></div>
 
 <script th:inline="javascript">
   // 获取后端传递的数据
@@ -541,5 +517,8 @@
     }
   });
 </script>
+
+<!-- 引入公共底部导航 -->
+<div th:replace="common/footer :: footer"></div>
 </body>
 </html>

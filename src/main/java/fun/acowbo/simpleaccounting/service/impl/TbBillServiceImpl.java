@@ -59,6 +59,7 @@ public class TbBillServiceImpl implements ITbBillService {
         lambdaQueryWrapper.eq(getTbBillReqVo.getId() != null, TbBill::getId, getTbBillReqVo.getId())
                 .eq(getTbBillReqVo.getCategoryId() != null, TbBill::getCategoryId, getTbBillReqVo.getCategoryId())
                 .eq(TbBill::getUserId, UserContext.getUserId())
+                .eq(TbBill::getIsDeleted, 0)
                 .between(getTbBillReqVo.getStartTime() != null, TbBill::getBillTime, getTbBillReqVo.getStartTime(), getTbBillReqVo.getEndTime())
                 .like(getTbBillReqVo.getName() != null, TbBill::getName, getTbBillReqVo.getName())
                 .between(getTbBillReqVo.getMinAmount() != null, TbBill::getAmount, getTbBillReqVo.getMinAmount(), getTbBillReqVo.getMaxAmount())

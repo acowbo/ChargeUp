@@ -12,11 +12,12 @@ body {
 	max-width: 780px;
 	font-size: 16px;
 	/* 设置根元素的字体大小 */
-	margin: 0 auto;
+	margin: 0 auto !important; /* 强制居中显示 */
 	background: #f2f2f2;
 	height: 100%;
 	overflow-y: auto; /* 添加垂直滚动 */
 	-webkit-overflow-scrolling: touch; /* iOS流畅滚动 */
+	position: relative; /* 确保定位上下文正确 */
 }
 
 ul li {
@@ -86,9 +87,10 @@ a {
 .content {
 	width: 94%;
 	margin: 0 auto;
-	padding-bottom: 70px; /* 为底部导航留出空间 */
+	padding-bottom: 80px !important; /* 强制为底部导航留出足够空间 */
 	overflow-y: auto; /* 添加垂直滚动 */
 	-webkit-overflow-scrolling: touch; /* iOS流畅滚动 */
+	min-height: calc(100vh - 60px); /* 确保内容区域至少有一定高度 */
 }
 
 .bill_box {
@@ -169,12 +171,17 @@ a {
 .fix_footer {
 	position: fixed;
 	bottom: 0;
+	left: 0;
+	right: 0;
 	width: 100%;
 	max-width: 780px;
 	background: #fffdfd;
 	padding: 6px 0;
 	z-index: 200; /* 添加z-index确保高于内容但低于模态框 */
 	box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* 添加阴影增强视觉层次感 */
+	left: 50% !important; /* 强制在所有页面中居中 */
+	transform: translateX(-50%) !important; /* 强制使用变换居中 */
+	margin: 0 auto; /* 额外的居中保证 */
 }
 
 .fix_footer ul li {

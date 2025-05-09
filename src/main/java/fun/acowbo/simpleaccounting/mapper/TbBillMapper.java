@@ -20,7 +20,7 @@ public interface TbBillMapper extends BaseMapper<TbBill> {
 
     @Select("SELECT COALESCE(SUM(amount), 0) " +
             "FROM tb_bill " +
-            "WHERE bill_time >= #{startDate} AND bill_time <= #{endDate} AND in_bill = #{type} AND user_id = #{userId}")
+            "WHERE bill_time >= #{startDate} AND bill_time <= #{endDate} AND in_bill = #{type} AND user_id = #{userId} and is_deleted = 0 ")
     BigDecimal findByTimestampBetween(@Param("startDate") LocalDateTime startDate,
                                       @Param("endDate") LocalDateTime endDate,
                                       @Param("type") int type,
