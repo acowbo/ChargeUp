@@ -20,6 +20,68 @@
             --income-color: #27ae60;
         }
 
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            height: 70vh;
+            max-width: 380px;
+            background: #fff;
+            z-index: 1001;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .modal-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff;
+            position: relative;
+            z-index: 1;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media screen and (max-width: 480px) {
+            .modal-container {
+                width: 85%;
+                height: 65vh;
+                max-width: none;
+                border-radius: 16px;
+                position: fixed;
+                left: 50%;
+                transform: translate(-50%, -50%) !important;
+            }
+
+            /* 处理输入法弹出时的问题 */
+            body.keyboard-open .modal-container {
+                position: absolute;
+                transform: translate(-50%, 0) !important;
+                top: 20px;
+                bottom: auto;
+            }
+        }
+
         body {
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
             margin: 0;
@@ -414,5 +476,74 @@
 </script>
 <!-- 引入公共底部导航 -->
 <div th:replace="~{common/footer :: footer}"></div>
+
+<!-- Modal for add account -->
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal-container" id="modalContainer">
+    <iframe id="modalIframe" class="modal-iframe"></iframe>
+</div>
+
+<script>
+    // 添加输入法弹出检测
+    let originalHeight = window.innerHeight;
+    window.addEventListener('resize', function() {
+        if (window.innerHeight < originalHeight) {
+            // 输入法弹出
+            document.body.classList.add('keyboard-open');
+        } else {
+            // 输入法收起
+            document.body.classList.remove('keyboard-open');
+            originalHeight = window.innerHeight;
+        }
+    });
+
+    function openAddAccountModal() {
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContainer = document.getElementById('modalContainer');
+        const modalIframe = document.getElementById('modalIframe');
+
+        modalOverlay.style.display = 'block';
+        modalContainer.style.display = 'block';
+        modalIframe.src = '/add_account';
+
+        // 添加动画效果
+        modalContainer.style.opacity = '0';
+        modalContainer.style.transform = 'translate(-50%, -45%)';
+        setTimeout(() => {
+            modalContainer.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            modalContainer.style.opacity = '1';
+            modalContainer.style.transform = 'translate(-50%, -50%)';
+        }, 50);
+    }
+
+    function closeAddAccountModal() {
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContainer = document.getElementById('modalContainer');
+        const modalIframe = document.getElementById('modalIframe');
+
+        // 添加关闭动画
+        modalContainer.style.opacity = '0';
+        modalContainer.style.transform = 'translate(-50%, -45%)';
+        modalOverlay.style.opacity = '0';
+
+        setTimeout(() => {
+            modalOverlay.style.display = 'none';
+            modalContainer.style.display = 'none';
+            modalIframe.src = '';
+            location.reload();
+        }, 300);
+    }
+
+    // 修改记一笔按钮的点击事件
+    document.addEventListener('DOMContentLoaded', function() {
+        const addBillButton = document.querySelector('.addBill');
+        if (addBillButton && addBillButton.parentElement) {
+            addBillButton.parentElement.addEventListener('click', function(e) {
+                e.preventDefault();
+                openAddAccountModal();
+            });
+        }
+    });
+</script>
 </body>
 </html>

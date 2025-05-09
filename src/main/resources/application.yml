@@ -2,9 +2,10 @@ spring:
   application:
     name: bo_tally
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:simple_accounting}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+#    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:simple_accounting}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://124.220.63.130:3351/simple_accounting?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: ${MYSQL_USER:root}
-    password: ${MYSQL_PASSWORD:password}
+    password: tLo1d5mR5nDURjSs
     driver-class-name: com.mysql.cj.jdbc.Driver
   flyway:
     enabled: true

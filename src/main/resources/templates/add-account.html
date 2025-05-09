@@ -839,12 +839,24 @@
         e.preventDefault();
 
         const formData = new FormData(this);
+        // 获取账单时间，如果为空则设置为当前时间
+        let billTime = formData.get('billTime');
+        if (!billTime) {
+            const now = new Date();
+            billTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            document.getElementById('billTime').value = billTime;
+            document.querySelector('.datetime-picker-input').value = `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日 ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        }
+
         const data = {
             amount: formData.get('amount'),
-            category: formData.get('category'),
-            type: formData.get('type'),
-            remark: formData.get('remark')
+            categoryId: formData.get('categoryId'),  // 修正字段名，使用categoryId
+            inBill: formData.get('inBill'),  // 修正字段名，使用inBill
+            name: formData.get('name'),   // 修正字段名，使用name
+            billTime: billTime  // 使用处理后的账单时间
         };
+
+        console.log(data);
 
         // 表单验证
         if (!data.amount || isNaN(data.amount)) {
@@ -852,13 +864,13 @@
             return;
         }
 
-        if (!data.category) {
+        if (!data.categoryId) {
             alert('请选择类别');
             return;
         }
 
         // 发送请求添加账单
-        fetch('/TbBill/addBill', {
+        fetch('/TbBill/saveBill', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1003,6 +1015,9 @@
             this.selectedDate = new Date();
             this.updateDisplay();
             this.isOpen = false;
+
+            // 初始化时自动设置当前时间作为默认值
+            this.confirm();
         }
 
         init() {
