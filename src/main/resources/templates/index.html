@@ -110,16 +110,27 @@
 			</div>
 		</div>
 	</div>
-	<div class="classified_expenditure bill_box">
+	<div class="classified_expenditure bill_box" style="display: flex; flex-direction: column;">
 		<div class="classified_title flex clearfix"><strong>本月分类支出</strong>
 			<div class="item_all"><span class="mr">记账笔数<em class="black_num">[[${count}]]</em></span>总支出<em
 					class="green_num">[[${detail.monthlyExpense}]]</em></div>
 		</div>
-		<ol class="custom-list" th:each="typeSum : ${typeList}">
-			<li><i><img src="images/icon1.png" alt=""></i> [[${typeSum.name}]]<span class="blacklist_num fr">[[${typeSum.amount}]]</span></li>
-			<!-- <li><i><img src="images/icon1.png" alt=""></i> 行业交通<span class="blacklist_num fr">0.00</span></li> -->
-			<!-- <li><i><img src="images/icon1.png" alt=""></i> 居家物业<span class="blacklist_num fr">0.00</span></li> -->
-		</ol>
+		<div class="expenditure-list-container" style="max-height: 40vh; overflow-y: auto !important; -webkit-overflow-scrolling: touch; border-top: 1px solid #f2f2f2; margin-top: 5px;">
+			<ol class="custom-list">
+				<li th:each="typeSum : ${typeList}"><i><img src="images/icon1.png" alt=""></i> [[${typeSum.name}]]<span class="blacklist_num fr">[[${typeSum.amount}]]</span></li>
+				<!-- 下面是测试数据，如果类型列表为空或者数量很少，可以显示这些测试数据来测试滚动功能 -->
+				<li th:if="${#lists.isEmpty(typeList)}"><i><img src="images/icon1.png" alt=""></i> 测试类型1<span class="blacklist_num fr">100.00</span></li>
+				<li th:if="${#lists.isEmpty(typeList)}"><i><img src="images/icon1.png" alt=""></i> 测试类型2<span class="blacklist_num fr">200.00</span></li>
+				<li th:if="${#lists.isEmpty(typeList)}"><i><img src="images/icon1.png" alt=""></i> 测试类型3<span class="blacklist_num fr">300.00</span></li>
+				<li th:if="${#lists.isEmpty(typeList)}"><i><img src="images/icon1.png" alt=""></i> 测试类型4<span class="blacklist_num fr">400.00</span></li>
+				<li th:if="${#lists.isEmpty(typeList)}"><i><img src="images/icon1.png" alt=""></i> 测试类型5<span class="blacklist_num fr">500.00</span></li>
+				<li th:if="${#lists.isEmpty(typeList)}"><i><img src="images/icon1.png" alt=""></i> 测试类型6<span class="blacklist_num fr">600.00</span></li>
+				<li th:if="${#lists.isEmpty(typeList)}"><i><img src="images/icon1.png" alt=""></i> 测试类型7<span class="blacklist_num fr">700.00</span></li>
+				<li th:if="${#lists.isEmpty(typeList)}"><i><img src="images/icon1.png" alt=""></i> 测试类型8<span class="blacklist_num fr">800.00</span></li>
+				<li th:if="${#lists.isEmpty(typeList)}"><i><img src="images/icon1.png" alt=""></i> 测试类型9<span class="blacklist_num fr">900.00</span></li>
+				<li th:if="${#lists.isEmpty(typeList)}"><i><img src="images/icon1.png" alt=""></i> 测试类型10<span class="blacklist_num fr">1000.00</span></li>
+			</ol>
+		</div>
 	</div>
 	<!-- <div class="classified_expenditure bill_box"> -->
 	<!-- 	<div class="classified_title flex clearfix"><strong>本月分类收入</strong> -->

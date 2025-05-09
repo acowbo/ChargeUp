@@ -3,12 +3,20 @@
 	padding: 0;
 }
 
+html {
+	height: 100%;
+	overflow-y: auto;
+}
+
 body {
 	max-width: 780px;
 	font-size: 16px;
 	/* 设置根元素的字体大小 */
 	margin: 0 auto;
 	background: #f2f2f2;
+	height: 100%;
+	overflow-y: auto; /* 添加垂直滚动 */
+	-webkit-overflow-scrolling: touch; /* iOS流畅滚动 */
 }
 
 ul li {
@@ -78,6 +86,9 @@ a {
 .content {
 	width: 94%;
 	margin: 0 auto;
+	padding-bottom: 70px; /* 为底部导航留出空间 */
+	overflow-y: auto; /* 添加垂直滚动 */
+	-webkit-overflow-scrolling: touch; /* iOS流畅滚动 */
 }
 
 .bill_box {
@@ -90,6 +101,17 @@ a {
 }
 
 .billStatistics {}
+
+.classified_expenditure {
+	/* 移除最大高度限制，因为我们已经在容器上设置了 */
+}
+
+.expenditure-list-container {
+	max-height: 40vh; /* 限制最大高度为视口高度的40% */
+	overflow-y: auto !important; /* 强制添加垂直滚动 */
+	-webkit-overflow-scrolling: touch; /* iOS流畅滚动 */
+	padding-right: 5px; /* 添加右侧内边距，为滚动条留出空间 */
+}
 
 .today {
 	border-bottom: 1px solid #f2f2f2;
@@ -151,6 +173,8 @@ a {
 	max-width: 780px;
 	background: #fffdfd;
 	padding: 6px 0;
+	z-index: 200; /* 添加z-index确保高于内容但低于模态框 */
+	box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* 添加阴影增强视觉层次感 */
 }
 
 .fix_footer ul li {
@@ -169,6 +193,10 @@ a {
 
 .classified_title {
 	padding: .6rem 0;
+	position: sticky;
+	top: 0;
+	background: #fff;
+	z-index: 10;
 }
 
 .classified_title strong {
